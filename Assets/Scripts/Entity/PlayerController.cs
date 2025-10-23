@@ -1,57 +1,47 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Windows;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : BaseController
 {
-    public Transform playerTransform;
-    public float moveLeft = -5f;
-    public float moveRight = 5f;
-    public float moveDown = -5f;
-    public float moveUp = 5f;
+    private Camera camera;
 
-
-    // Start is called before the first frame update
-    void Start()
+    protected override void Start()
     {
-        moveLeft = -5f;
-        moveRight = 5f;
-        moveDown = -5f;
-        moveUp = 5f;
+        base.Start();
+        camera = Camera.main;
+    }
 
-}
-
-    // Update is called once per frame
-    void Update()
+    protected override void HandleAction()
     {
-        float tranLeft = playerTransform.position.x;
-        float tranRight = playerTransform.position.x;
-        float tranDown = playerTransform.position.y;
-        float tranUp = playerTransform.position.y;
+        float horizontal = Input.GetAxisRaw("Horizontal");
+        float vertial = Input.GetAxisRaw("Vertical");
+        movementDirection = new Vector2(horizontal, vertial).normalized;
 
-        float transEverX = this.transform.position.x;
-        float transEverY = this.transform.position.y;
+        Debug.Log(movementDirection);
 
-        if (UnityEngine.Input.GetKey(KeyCode.A))
+        if (movementDirection.x > 0)
         {
-            tranLeft += moveLeft * Time.deltaTime;
-            playerTransform.position = new Vector3(tranLeft, transEverY, 0);
+            isFlipX = false;
         }
-        else if (UnityEngine.Input.GetKey(KeyCode.D))
+        else if (movementDirection.x < 0)
         {
-            tranRight += moveRight * Time.deltaTime;
-            playerTransform.position = new Vector3(tranRight, transEverY, 0);
+            isFlipX = true;
         }
-        else if (UnityEngine.Input.GetKey(KeyCode.W))
+
+        //아래는 마우스로 좌우 반전하는 Rotate(lookDirection); 에 필요한 내용
+        Vector2 mousePosition = Input.mousePosition;
+        Vector2 worldPos = camera.ScreenToWorldPoint(mousePosition);
+        lookDirection = (worldPos - (Vector2)transform.position);
+
+        if (lookDirection.magnitude < 0.9f) //lookDirection의 벡터의 크기가 0.9보다 작으면 예외처리
         {
-            tranUp += moveUp * Time.deltaTime;
-            playerTransform.position = new Vector3(transEverX, tranUp, 0);
+            lookDirection = Vector2.zero;
         }
-        else if (UnityEngine.Input.GetKey(KeyCode.S))
+        else
         {
-            tranDown += moveDown * Time.deltaTime;
-            playerTransform.position = new Vector3(transEverX, tranDown, 0);
+            lookDirection = lookDirection.normalized;
         }
     }
 }
