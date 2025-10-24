@@ -26,6 +26,10 @@ public class TheStack : MonoBehaviour
     int stackCount = -1; //시작할 때 +1해서 사용할 것
     int comboCount = 0;
 
+    //블럭의 컬러 지정
+    public Color prevColor;
+    public Color nextColor;
+
 
     void Start()
     {
@@ -34,6 +38,11 @@ public class TheStack : MonoBehaviour
             Debug.Log("originBlock이 없습니다.");
             return;
         }
+
+        //미리 색상 지정
+        prevColor = GetRandomColor();
+        nextColor = GetRandomColor();
+
         prevBlockPosition = Vector3.down;
 
         Spawn_Block(); //블럭 1개 생성
@@ -69,6 +78,8 @@ public class TheStack : MonoBehaviour
             return false;
         }
 
+        ColorChange(newBlock); //새롭게 생성된 이후에 색상 변경
+
         newTrans = newBlock.transform;
         newTrans.parent = this.transform;
         newTrans.localPosition = prevBlockPosition + Vector3.up;
@@ -83,5 +94,40 @@ public class TheStack : MonoBehaviour
         lastBlock = newTrans;
 
         return true;
+    }
+
+    Color GetRandomColor()
+    {
+        float r = Random.Range(100f, 250f) /255f;
+        float g = Random.Range(100f, 250f) /255f;
+        float b = Random.Range(100f, 250f) / 255f;
+
+        return new Color(r, g, b);
+    }
+
+    void ColorChange(GameObject go)
+    {
+        Color applyColor = Color.Lerp(prevColor, nextColor, (stackCount % 11) /10f);
+        //stackCount % 11 -> 0부터 10까지 값들이 순환을 돌게 됨
+        // 이전, 다음 컬러 값의 중간 값들이 순서에 맞춰서 바뀌게 됨
+
+        Renderer rn = go.GetComponent<Renderer>(); //Renderer는 그려내는 것
+        //메쉬렌더러의 부모클래스가 렌더러. 부모 클래스를 가져와서 컬러 값을 변경
+
+        if (rn == null)//예외처리
+        {
+            Debug.Log("렌더러가 비어있음");
+        }
+
+        rn.material.color = applyColor;
+        //메쉬렌더러 -> material로 형태 외곽의 재질 결정하고 있음.
+
+        Camera.main.backgroundColor = applyColor - new Color(0.1f, 0.1f, 0.1f);
+
+        if (applyColor.Equals(nextColor)) //적용컬러와 다음컬러가 동일하다면 -> nextColor가 10의 단위에 도달함을 뜻함
+        {
+            prevColor = nextColor;
+            nextColor = GetRandomColor(); //새롭게 컬러 할당
+        }
     }
 }
