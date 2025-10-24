@@ -30,6 +30,8 @@ public class TheStack : MonoBehaviour
     public Color prevColor;
     public Color nextColor;
 
+    bool isMovingX = true; //이동 방향 검사
+
 
     void Start()
     {
@@ -46,6 +48,8 @@ public class TheStack : MonoBehaviour
         prevBlockPosition = Vector3.down;
 
         Spawn_Block(); //블럭 1개 생성
+
+        Spawn_Block();
     }
 
     void Update()
@@ -54,12 +58,14 @@ public class TheStack : MonoBehaviour
         {
             Spawn_Block();
         }
+        MoveBlock();
 
         // 생성 후 TheStack 움직여주기 위해
         transform.position = Vector3.Lerp(transform.position, desiredPosition, StackMovingSpeed * Time.deltaTime);
         // desiredPosition으로 바로 이동시켜 줄 수도 있지만 끊겨보임
         // Vector3.Lerp -> 부드러운 이동 처리 -> Lerp(시작지점, 끝지점, t(시간값))
         // t값은 0~1이 들어감. 일정한 값을 선형으로 두고 퍼센테이지로 가져감. (t가 퍼센테이지)
+
     }
 
     bool Spawn_Block()
@@ -92,6 +98,8 @@ public class TheStack : MonoBehaviour
         blockTransition = 0f; //이동 처리를 위한 기준값(초기화)
 
         lastBlock = newTrans;
+
+        isMovingX = !isMovingX; //방향 반대로
 
         return true;
     }
@@ -128,6 +136,24 @@ public class TheStack : MonoBehaviour
         {
             prevColor = nextColor;
             nextColor = GetRandomColor(); //새롭게 컬러 할당
+        }
+    }
+
+    void MoveBlock()
+    {
+        blockTransition += Time.deltaTime * BlockMovingSpeed;
+
+        //blockTransition이 이동하는 수치의 퍼센테이지를 가져갈 것임
+        float movePosition = Mathf.PingPong(blockTransition, BoundSize) - BoundSize/2; //BoundSize의 반만큼 이동
+        //pingpong -> 0부터 내가 지정한 값까지를 순환함(양수만). (sin을 써서 완만한 곡선 가능. 단, 음수도 범위임)
+
+        if (isMovingX)
+        {
+            lastBlock.localPosition = new Vector3(movePosition * MovingBoundsSize, stackCount, secondaryPosition);
+        }
+        else
+        {
+            lastBlock.localPosition = new Vector3(secondaryPosition, stackCount, -movePosition * MovingBoundsSize);
         }
     }
 }
