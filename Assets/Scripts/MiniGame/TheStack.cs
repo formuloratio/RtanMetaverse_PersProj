@@ -56,7 +56,16 @@ public class TheStack : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-            Spawn_Block();
+            if (PlaceBlock())
+            {
+                Spawn_Block();
+            }
+            else
+            {
+                //게임 오버
+                Debug.Log("Game Over");
+            }
+            
         }
         MoveBlock();
 
@@ -155,5 +164,71 @@ public class TheStack : MonoBehaviour
         {
             lastBlock.localPosition = new Vector3(secondaryPosition, stackCount, -movePosition * MovingBoundsSize);
         }
+    }
+
+    bool PlaceBlock()
+    {
+        Vector3 lastPosition = lastBlock.localPosition;
+
+        if (isMovingX) //x축
+        {
+            float deltaX = prevBlockPosition.x - lastPosition.x; //잘려 나가야하는 크기
+            deltaX = Mathf.Abs(deltaX); //절대값(무조건 양수화)
+
+            if (deltaX > ErrorMargin) //잘라내야함
+            {
+                stackBounds.x -= deltaX; //stackBounds -> 다음 블럭을 생성할 사이즈
+                if (stackBounds.x <= 0)
+                {
+                    return false; //게임 오버
+                }
+
+                //새로운 패치(이탈 부분 제외한 블럭으로 재생성)
+                float middle = (prevBlockPosition.x + lastPosition.x) / 2f; //두 블럭의 중심지점 찾기
+                lastBlock.localScale = new Vector3(stackBounds.x, 1, stackBounds.y);
+
+                Vector3 tempPosition = lastBlock.localPosition;
+                tempPosition.x = middle;
+                lastBlock.localPosition = lastPosition = tempPosition;
+            }
+            else //위치 보정만
+            {
+                lastBlock.localPosition = prevBlockPosition + Vector3.up; //이전 블록에서 한칸 위의 것을 위치값으로 재조정
+                //이거 없으면 에러 마진보다 계속 작은 값으로 차이점이 발생할 것임.
+            }
+
+        }
+        else //z축
+        {
+            float deltaZ = prevBlockPosition.z - lastPosition.z;
+            deltaZ = Mathf.Abs(deltaZ);
+
+            if (deltaZ > ErrorMargin)
+            {
+                stackBounds.y -= deltaZ;
+                if (stackBounds.y <= 0)
+                {
+                    return false;
+                }
+
+                float middle = (prevBlockPosition.z + lastPosition.z) / 2f;
+                lastBlock.localScale = new Vector3(stackBounds.x, 1, stackBounds.y);
+
+                Vector3 tempPosition = lastBlock.localPosition;
+                tempPosition.z = middle;
+                lastBlock.localPosition = lastPosition = tempPosition;
+            }
+            else
+            {
+                lastBlock.localPosition = prevBlockPosition + Vector3.up;
+            }
+        }
+
+        //이동한 방향이 어디냐에 따라서 x/z 축 값을 저장함.
+        secondaryPosition = (isMovingX) ? lastBlock.localPosition.x : lastBlock.localPosition.z;
+        //이전 블록 위치가 계속해서 바뀌고 있기 때문에 중점인 0의 위치를 계속 사용 못함
+        // 그래서 이동시킨 축의 값을 저장해뒀다가 Moving에서 사용하고 있는 것
+
+        return true;
     }
 }
