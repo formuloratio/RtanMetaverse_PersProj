@@ -4,7 +4,7 @@
 PlayerSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 26
-  productGUID: 00000000000000000000000000000000
+  productGUID: a6f1e04ceed8cc94b927bf6561d671f3
   AndroidProfiler: 0
   AndroidFilterTouchesWhenObscured: 0
   AndroidEnableSustainedPerformanceMode: 0
@@ -919,7 +919,7 @@ PlayerSettings:
   cloudProjectId: 34e5c5da-2858-4f8e-8f16-bf1e0b9aa742
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
-  projectName: 
+  projectName: Rtan_Metaverse
   organizationId: formuloratio
   cloudEnabled: 0
   legacyClampBlendShapeWeights: 0
