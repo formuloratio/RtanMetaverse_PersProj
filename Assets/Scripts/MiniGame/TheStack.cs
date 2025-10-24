@@ -173,6 +173,8 @@ public class TheStack : MonoBehaviour
         if (isMovingX) //x축
         {
             float deltaX = prevBlockPosition.x - lastPosition.x; //잘려 나가야하는 크기
+            bool isNegativeNum = (deltaX < 0) ? true : false; //잘려나간 블록이 생성될 방향 지정
+
             deltaX = Mathf.Abs(deltaX); //절대값(무조건 양수화)
 
             if (deltaX > ErrorMargin) //잘라내야함
@@ -190,6 +192,20 @@ public class TheStack : MonoBehaviour
                 Vector3 tempPosition = lastBlock.localPosition;
                 tempPosition.x = middle;
                 lastBlock.localPosition = lastPosition = tempPosition;
+
+                //Rubble 생성 구간
+                float rubbleHalfScale = deltaX / 2f;
+                CreateRubble(
+                    new Vector3(
+                        isNegativeNum ? //x축 변경
+                        lastPosition.x + stackBounds.x / 2 + rubbleHalfScale :
+                        lastPosition.x - stackBounds.x / 2 - rubbleHalfScale,
+
+                        lastPosition.y,
+                        lastPosition.z),
+
+                    new Vector3(deltaX, 1, stackBounds.y));
+
             }
             else //위치 보정만
             {
@@ -201,6 +217,8 @@ public class TheStack : MonoBehaviour
         else //z축
         {
             float deltaZ = prevBlockPosition.z - lastPosition.z;
+            bool isNegativeNum = (deltaZ < 0) ? true : false; //잘려나간 블록이 생성될 방향 지정
+
             deltaZ = Mathf.Abs(deltaZ);
 
             if (deltaZ > ErrorMargin)
@@ -217,6 +235,20 @@ public class TheStack : MonoBehaviour
                 Vector3 tempPosition = lastBlock.localPosition;
                 tempPosition.z = middle;
                 lastBlock.localPosition = lastPosition = tempPosition;
+
+
+                //Rubble 생성 구간
+                float rubbleHalfScale = deltaZ / 2f;
+                CreateRubble(
+                    new Vector3(
+                        lastPosition.x,
+                        lastPosition.y,
+
+                        isNegativeNum ? //z축 변경
+                        lastPosition.z + stackBounds.y / 2 + rubbleHalfScale :
+                        lastPosition.z - stackBounds.y / 2 - rubbleHalfScale),
+
+                    new Vector3(stackBounds.x, 1, deltaZ));
             }
             else
             {
@@ -230,5 +262,19 @@ public class TheStack : MonoBehaviour
         // 그래서 이동시킨 축의 값을 저장해뒀다가 Moving에서 사용하고 있는 것
 
         return true;
+    }
+
+    //파편 만들기
+    void CreateRubble(Vector3 pos, Vector3 scale)
+    {
+        GameObject go = Instantiate(lastBlock.gameObject);
+        go.transform.parent = this.transform;
+
+        go.transform.localPosition = pos;
+        go.transform.localScale = scale;
+        go.transform.localRotation = Quaternion.identity;
+
+        go.AddComponent<Rigidbody>(); //조각은 바닥으로 떨어져야하기에
+        go.name = "Rubble"; //게임오브젝트 이름 변경됨
     }
 }
