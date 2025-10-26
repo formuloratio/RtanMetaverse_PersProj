@@ -48,6 +48,8 @@ public class TheStack : MonoBehaviour
     private const string BestScoreKey = "BestScore";
     private const string BestComboKey = "BestCombo";
 
+    private bool isGameOver = false;
+
     void Start()
     {
         if (originBlock == null)
@@ -73,6 +75,8 @@ public class TheStack : MonoBehaviour
 
     void Update()
     {
+        if (isGameOver) return;
+
         if (Input.GetMouseButtonDown(0))
         {
             if (PlaceBlock())
@@ -84,6 +88,8 @@ public class TheStack : MonoBehaviour
                 //게임 오버
                 Debug.Log("Game Over");
                 UpdateScore();
+                isGameOver = true;
+                GameOverEffect();
             }
             
         }
@@ -333,6 +339,25 @@ public class TheStack : MonoBehaviour
 
             PlayerPrefs.SetInt(BestScoreKey, bestScore); //저장
             PlayerPrefs.SetInt(BestComboKey, bestCombo);
+        }
+    }
+
+    void GameOverEffect()
+    {
+        int  childCount = this.transform.childCount; //childCount -> 트랜스폼의 하위에 있는 오브젝트의 개수 (안에 있는 블럭들)
+
+        for (int i = 1; i <= 20; i++)
+        {
+            if (childCount < i) break; //인덱스에서 벗어나기에 브레이크
+
+            GameObject go = transform.GetChild(childCount - i).gameObject; //하위 오브젝트를 인덱스로 찾아오기
+
+            if (go.name.Equals("Rubble")) continue; //Rubble -> 바닥으로 떨어지고 있는 애
+
+            Rigidbody rigid = go.AddComponent<Rigidbody>(); // 리지드바디 달아주기
+            rigid.AddForce( //힘 적용해서 날려버리기
+                (Vector3.up * Random.Range(0, 10f) + Vector3.right * (Random.Range(0, 10f) - 5f)) * 100f
+                );
         }
     }
 }
