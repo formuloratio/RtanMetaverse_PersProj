@@ -30,7 +30,7 @@ public class TheStack : MonoBehaviour
     //스코어 기능
     public int Score { get { return stackCount; } }
     public int Combo { get { return comboCount; } }
-    private int MaxCombo { get => maxCombo; }
+    public int MaxCombo { get => maxCombo; }
 
     //블럭의 컬러 지정
     public Color prevColor;
@@ -136,6 +136,7 @@ public class TheStack : MonoBehaviour
 
         isMovingX = !isMovingX; //방향 반대로
 
+        UIManager.Instance.UpdateScore();
         return true;
     }
 

@@ -66,4 +66,9 @@ public class UIManager : MonoBehaviour
         Application.Quit();
 #endif
     }
+
+    public void UpdateScore()
+    {
+        gameUI.SetUI(theStack.Score, theStack.Combo, theStack.MaxCombo);
+    }
 }
