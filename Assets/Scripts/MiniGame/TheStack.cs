@@ -48,7 +48,7 @@ public class TheStack : MonoBehaviour
     private const string BestScoreKey = "BestScore";
     private const string BestComboKey = "BestCombo";
 
-    private bool isGameOver = false;
+    private bool isGameOver = true; //게임 시작시 멈춰있도록 true
 
     void Start()
     {
@@ -359,5 +359,37 @@ public class TheStack : MonoBehaviour
                 (Vector3.up * Random.Range(0, 10f) + Vector3.right * (Random.Range(0, 10f) - 5f)) * 100f
                 );
         }
+    }
+
+    public void Restart()
+    { //거의 모든 값 초기화
+        int childCount = transform.childCount;
+        for (int i = 0; i < childCount; i++)
+        {
+            Destroy(transform.GetChild(i).gameObject);
+        }
+
+        isGameOver = false;
+
+        lastBlock = null;
+        desiredPosition = Vector3.zero;
+        stackBounds = new Vector3(BoundSize, BoundSize);
+
+        stackCount = -1;
+        isMovingX = true;
+        blockTransition = 0f;
+        secondaryPosition = 0f;
+
+        comboCount = 0;
+        maxCombo = 0;
+
+        prevBlockPosition = Vector3.down;
+
+        prevColor = GetRandomColor();
+        nextColor = GetRandomColor();
+
+        //처음 블록과 이동 블록 2개 생성
+        Spawn_Block();
+        Spawn_Block();
     }
 }
