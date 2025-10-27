@@ -4,25 +4,24 @@ using UnityEngine;
 
 public class GameManger : MonoBehaviour
 {
+    public GameObject playerObj;
+
+    public float playerPosX = 0;
+    public float playerPosY = 0;
+
+    private const string PlayerPosXKey = "PlayerPositionX";
+    private const string PlayerPosYKey = "PlayerPositionY";
+
+
     public static GameManger Instance { get; private set; }
+
     private void Awake()
     {
         if (Instance == null)
         {
             Instance = this;
         }
-    }
 
-    public GameObject playerObj;
-
-    float playerPosX = 0;
-    float playerPosY = 0;
-
-    private const string PlayerPosXKey = "PlayerPositionX";
-    private const string PlayerPosYKey = "PlayerPositionY";
-
-    private void Start()
-    {
         playerPosX = PlayerPrefs.GetFloat(PlayerPosXKey, 0);
         playerPosY = PlayerPrefs.GetFloat(PlayerPosYKey, 0);
 
@@ -30,6 +29,12 @@ public class GameManger : MonoBehaviour
 
         Vector3 playerPos = new Vector3(playerPosX, playerPosY, 0);
         playerObj.transform.position = playerPos;
+    }
+
+    
+    private void Start()
+    {
+
     }
 
     public void OnSavePosition()

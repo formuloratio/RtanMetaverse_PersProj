@@ -6,6 +6,7 @@ public class FollowCamera : MonoBehaviour
 {
     public Transform target;
     float offsetX;
+    float offsetY;
 
 
     void Start()
@@ -13,7 +14,8 @@ public class FollowCamera : MonoBehaviour
         if (target == null)
             return;
 
-        offsetX = transform.position.x - target.position.x;
+        offsetX = transform.position.x - target.position.x + GameManger.Instance.playerPosX;
+        offsetY = transform.position.y - target.position.y + GameManger.Instance.playerPosY;
     }
 
 
@@ -24,6 +26,7 @@ public class FollowCamera : MonoBehaviour
 
         Vector3 pos = transform.position;
         pos.x = target.position.x + offsetX;
+        pos.y = target.position.y + offsetY;
         transform.position = pos;
     }
 }
