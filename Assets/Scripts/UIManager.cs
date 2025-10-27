@@ -71,4 +71,10 @@ public class UIManager : MonoBehaviour
     {
         gameUI.SetUI(theStack.Score, theStack.Combo, theStack.MaxCombo);
     }
+
+    public void SetScoreUI()
+    {
+        scoreUI.SetUI(theStack.Score, theStack.MaxCombo, theStack.BestScore, theStack.BestCombo);
+        ChangeState(UIState.Score);
+    }
 }
