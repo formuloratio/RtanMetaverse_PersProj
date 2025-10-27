@@ -19,8 +19,6 @@ public class PlayerController : BaseController
         float vertial = Input.GetAxisRaw("Vertical");
         movementDirection = new Vector2(horizontal, vertial).normalized;
 
-        Debug.Log(movementDirection);
-
         if (movementDirection.x > 0)
         {
             isFlipX = false;

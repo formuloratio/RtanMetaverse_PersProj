@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.SearchService;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.SocialPlatforms.Impl;
 
 public enum UIState
@@ -24,6 +26,8 @@ public class UIManager : MonoBehaviour
     ScoreUI scoreUI = null;
 
     TheStack theStack = null;
+
+    public GameObject loadingEffect;
 
     private void Awake()
     {
@@ -60,11 +64,14 @@ public class UIManager : MonoBehaviour
 
     public void OnClickExit()
     {
-#if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
-#else
-        Application.Quit();
-#endif
+        OnLoadingEffect();
+        StartCoroutine(OnLoadingScene());
+
+//#if UNITY_EDITOR
+//        UnityEditor.EditorApplication.isPlaying = false;
+//#else
+//        Application.Quit();
+//#endif
     }
 
     public void UpdateScore()
@@ -76,5 +83,16 @@ public class UIManager : MonoBehaviour
     {
         scoreUI.SetUI(theStack.Score, theStack.MaxCombo, theStack.BestScore, theStack.BestCombo);
         ChangeState(UIState.Score);
+    }
+
+    public void OnLoadingEffect()
+    {
+        loadingEffect.SetActive(true);
+    }
+
+    IEnumerator OnLoadingScene()
+    {
+        yield return new WaitForSeconds(2.0f);
+        SceneManager.LoadScene("WorldScene");
     }
 }

@@ -7,8 +7,8 @@ using UnityEngine.SocialPlatforms;
 public class TriggerManager : MonoBehaviour
 {
     public GameObject miniGameWindow;
-    public GameObject miniGameTrigger;
     public GameObject loadingEffect;
+
 
     // Start is called before the first frame update
     void Start()
@@ -32,6 +32,7 @@ public class TriggerManager : MonoBehaviour
 
     public void OnMiniGameYes()
     {
+        GameManger.Instance.OnSavePosition();
         Time.timeScale = 1;
         OnLoadingEffect();
         StartCoroutine(OnLoadingScene());
