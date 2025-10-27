@@ -12,14 +12,18 @@ public class GameManger : MonoBehaviour
     private const string PlayerPosXKey = "PlayerPositionX";
     private const string PlayerPosYKey = "PlayerPositionY";
 
-
-    public static GameManger Instance { get; private set; }
+    public static GameManger Instance { get; set; }
 
     private void Awake()
     {
         if (Instance == null)
         {
             Instance = this;
+        //    DontDestroyOnLoad(this.gameObject);
+        //}
+        //else
+        //{
+        //    Destroy(this.gameObject);
         }
 
         playerPosX = PlayerPrefs.GetFloat(PlayerPosXKey, 0);
@@ -29,12 +33,6 @@ public class GameManger : MonoBehaviour
 
         Vector3 playerPos = new Vector3(playerPosX, playerPosY, 0);
         playerObj.transform.position = playerPos;
-    }
-
-    
-    private void Start()
-    {
-
     }
 
     public void OnSavePosition()
